@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block content %}
+<div class="main-content main-content-list container">
+    {% comment %} recipes é a variável que recebe a lista na função home(), em views.py {% endcomment %}
+    {% for recipe in recipes %}
+        {% include 'partials/recipe.html' %}
+    {% endfor %}
+</div>
+{% endblock content %}
