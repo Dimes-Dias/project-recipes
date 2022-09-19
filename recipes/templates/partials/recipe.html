@@ -65,7 +65,7 @@
     {% if not is_detail_page %}
     {% if is_detail_page != True %} {% endcomment %}
 
-    {% if is_detail_page != True %}
+    {% if not is_detail_page is True %}
     <footer class="recipe-footer">
         <a class="recipe-read-more button button-dark button-full-width" href="{% url 'recipes:recipe' recipe.id %}">
             <i class="fas fa-eye"></i>

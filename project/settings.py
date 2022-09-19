@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # biblioteca para limpeza automática de arquivos substituídos em uploads
+    # basta instalar o pacote com 'pip install django_cleanup'
+    # e adicioná-lo aqui
+    'django_cleanup',
+    # app criado no projeto
     'recipes',
 ]
 

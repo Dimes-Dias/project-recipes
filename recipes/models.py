@@ -1,10 +1,36 @@
-from email.policy import default
-from tkinter.tix import Tree
+# from email.policy import default
+# from tkinter.tix import Tree
 
 from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
+
+'''
+Você pode encontrar mais detalhes sobre os tipos de atributos nos links abaixo..  # noqa: E501
+https://django-portuguese.readthedocs.io/en/1.0/ref/models/fields.html
+https://docs.djangoproject.com/pt-br/3.2/ref/models/fields/
+
+Opões importantes do models.ForeignKey ...
+
+    * on_delete=models.SET_NULL
+        Se a chave da tabela origem for eliminada, o campo vinculado recebe NULL. Nesse caso,
+        deve-se incluir também a opção (null=True) para permitir que o atributo receba Null.
+
+    * on_delete = models.CASCADE
+        Se a chave da tabela origem for eliminada, todos os registros da tabela vinculada
+        que contenham a chave também serão excluídos.
+
+    * on_delete=models.PROTECT
+        Impede que o objeto (registro) seja excluído, se houver outros objetos vinculados a ele.
+
+    * on_delete=models.RESTRICT
+        Semelhante ao PROTECT, mas permite exclusão em cascata, se o objeto referenciado estiver
+        como CASCADE de outro objeto.
+
+    * existem outras opções, caso queira pesquisar: SET_DEFAULT, DO_NOTHING e SET(alguma_funcao)
+
+'''
 
 
 class Category(models.Model):
@@ -36,7 +62,7 @@ class Recipe(models.Model):
     # se a Category for apagada, coloca null em category.
     # nesse caso, category deve permitir valores nulos.
     category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True, blank=True, default=None,)
+        Category, on_delete=models.SET_NULL, null=True, blank=True, default=None,)  # noqa: E501
     author = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True)
 
