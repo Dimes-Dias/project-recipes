@@ -13,7 +13,7 @@ def home(request):
         'recipes': recipes,
     })
     # return render(request, 'pages/home.html', context={
-    #     'recipes': [make_recipe() for _ in range(10)],
+    # 'recipes': [make_recipe() for _ in range(10)],
     # })
 
 
@@ -22,11 +22,11 @@ def category(request, category_id):
         category__id=category_id, is_published=True).order_by('-id')
 
     if not recipes:
-        raise Http404('Página não encontrada. :(')
+        raise Http404('Página não encontrada. 🤪')
 
     return render(request, 'pages/category.html', context={
         'recipes': recipes,
-        'title': f'Category {recipes.first().category.name} | '
+        'title': f'Category {recipes.first().category.name} - Category | '
     })
 
 

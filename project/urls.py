@@ -27,6 +27,13 @@ urlpatterns = [
     path('', include('recipes.urls')),
 ]
 
+'''
+Este código permite ao django mostrar na tela arquivos de
+MEDIA_URL e STATIC_URL, quando solicitados
+Precisa importar...
+    from django.conf import settings
+    from django.conf.urls.static import static
+'''
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
