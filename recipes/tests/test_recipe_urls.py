@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.urls import reverse
-from recipes import views
 
 
 # Você pode criar uma classe com um nome qualquer
