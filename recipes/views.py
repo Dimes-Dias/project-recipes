@@ -1,5 +1,6 @@
 from http.client import HTTPResponse
 
+from django.db.models import Q  # para usar OR (ou) no lugar de AND no filter
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render  # , get_list_or_404
 
@@ -23,15 +24,26 @@ def home(request):
 def search(request):
     # request.GET.get('q') retorna o mesmo que request.GET['q']
     # porém, quando vazio, o primeiro retorna None
-    search_term = request.GET.get('q')
+    search_term = request.GET.get('q', '').strip()
 
     if not search_term:
         raise Http404('Página não encontrada. 🤪')
 
-    recipes = Recipe.objects.filter(is_published=True).order_by('-id')
+    # faz a busca de receitas com base no que foi digitado
+    # o Q() permite personalizar o operador lógico: & (and), | (or)
+    recipes = Recipe.objects.filter(
+        # __icontains faz a funções de um like (contém)
+        Q(
+            Q(title__icontains=search_term) |
+            Q(description__icontains=search_term)
+        ),
+        is_published=True,
+    ).order_by('-id')
 
     return render(request, 'pages/search.html', context={
-        'recipes': recipes,
+        'page_title': f'Search for "{search_term}" | ',
+        'search_term': search_term,
+        'recipes': recipes
     })
 
 
