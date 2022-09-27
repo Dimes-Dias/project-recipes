@@ -27,6 +27,10 @@ class RecipeViewsTest(RecipeTestBase):
         view = resolve(reverse('recipes:recipe', kwargs={'id': 1000}))
         self.assertIs(view.func, views.recipe)
 
+    def test_recipe_search_user_correct_view_function(self):
+        view = resolve(reverse('recipes:search'))
+        self.assertIs(view.func, views.search)
+
     # ---------------------------------------------------------------------------------
     # Estes métodos contém testes de retorno de status 200 (sucesso) ou
     # 404 (página não encontrada) quando há previsão
@@ -34,6 +38,10 @@ class RecipeViewsTest(RecipeTestBase):
 
     def test_recipe_home_view_returns_status_code_200_ok(self):
         response = self.client.get(reverse('recipes:home'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_recipe_search_view_returns_status_code_200_ok(self):
+        response = self.client.get(reverse('recipes:search') + '?q=teste')
         self.assertEqual(response.status_code, 200)
 
     def test_recipe_category_view_returns_status_code_200_ok(self):
@@ -62,6 +70,11 @@ class RecipeViewsTest(RecipeTestBase):
             reverse('recipes:recipe', kwargs={'id': 1000}))
         self.assertEqual(response.status_code, 404)
 
+    def test_recipe_search_raises_404_if_search_term(self):
+        response = self.client.get(
+            reverse('recipes:search'))
+        self.assertEqual(response.status_code, 404)
+
     # ---------------------------------------------------------------------------------
     # Estes métodos contém testes de retorno do template correto
     # ---------------------------------------------------------------------------------
@@ -69,6 +82,10 @@ class RecipeViewsTest(RecipeTestBase):
     def test_recipe_home_view_loads_correct_template(self):
         response = self.client.get(reverse('recipes:home'))
         self.assertTemplateUsed(response, 'pages/home.html')
+
+    def test_recipe_search_view_loads_correct_template(self):
+        response = self.client.get(reverse('recipes:search') + '?q=teste')
+        self.assertTemplateUsed(response, 'pages/search.html')
 
     def test_recipe_category_view_loads_correct_template(self):
         # make_recipe()

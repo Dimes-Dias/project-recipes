@@ -1,8 +1,11 @@
+from http.client import HTTPResponse
+
 from django.http import Http404
-from django.shortcuts import get_list_or_404, get_object_or_404, render
-from utils.recipes.factory import make_recipe
+from django.shortcuts import get_object_or_404, render  # , get_list_or_404
 
 from recipes.models import Recipe
+
+# from utils.recipes.factory import make_recipe
 
 
 def home(request):
@@ -15,6 +18,21 @@ def home(request):
     # return render(request, 'pages/home.html', context={
     # 'recipes': [make_recipe() for _ in range(10)],
     # })
+
+
+def search(request):
+    # request.GET.get('q') retorna o mesmo que request.GET['q']
+    # porém, quando vazio, o primeiro retorna None
+    search_term = request.GET.get('q')
+
+    if not search_term:
+        raise Http404('Página não encontrada. 🤪')
+
+    recipes = Recipe.objects.filter(is_published=True).order_by('-id')
+
+    return render(request, 'pages/search.html', context={
+        'recipes': recipes,
+    })
 
 
 def category(request, category_id):
