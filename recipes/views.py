@@ -1,20 +1,35 @@
-from http.client import HTTPResponse
+# from http.client import HTTPResponse
 
 from django.db.models import Q  # para usar OR (ou) no lugar de AND no filter
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render  # , get_list_or_404
+from utils.pagination import make_pagination
 
 from recipes.models import Recipe
 
 # from utils.recipes.factory import make_recipe
+
+PER_PAGES = 9
 
 
 def home(request):
     # recipes = Recipe.objects.all().order_by('-id')
     recipes = Recipe.objects.filter(is_published=True).order_by('-id')
 
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGES)
+
+    # para enviar mensagens ao template...
+    # from django.contrib import messages
+    # exemplo de mensagens, cujas tags css estão
+    # embutidas no settings.py
+    # messages.success(request, 'Sua pesquisa foi efetuada.')
+    # messages.error(request, 'Esta é uma mensagem de erro.')
+    # messages.error(request, 'Esta é outra mensagem de erro.')
+    # messages.info(request, 'Esta é uma mensagem informativa.')
+
     return render(request, 'pages/home.html', context={
-        'recipes': recipes,
+        'recipes': page_obj,
+        'pagination_range': pagination_range,
     })
     # return render(request, 'pages/home.html', context={
     # 'recipes': [make_recipe() for _ in range(10)],
@@ -40,10 +55,14 @@ def search(request):
         is_published=True,
     ).order_by('-id')
 
-    return render(request, 'pages/search.html', context={
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGES)
+
+    return render(request, 'pages/search.html', {
         'page_title': f'Search for "{search_term}" | ',
         'search_term': search_term,
-        'recipes': recipes
+        'recipes': page_obj,
+        'pagination_range': pagination_range,
+        'additional_url_query': f'&q={search_term}'
     })
 
 
@@ -54,8 +73,11 @@ def category(request, category_id):
     if not recipes:
         raise Http404('Página não encontrada. 🤪')
 
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGES)
+
     return render(request, 'pages/category.html', context={
-        'recipes': recipes,
+        'recipes': page_obj,
+        'pagination_range': pagination_range,
         'title': f'Category {recipes.first().category.name} - Category | '
     })
 

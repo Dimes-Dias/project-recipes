@@ -3,6 +3,9 @@
 {% block title %} HOME | {% endblock title %}
 
 {% block content %}
+
+{% include 'partials/messages.html' %}
+
 <div class="main-content main-content-list container">
     {% comment %} recipes é a variável que recebe a lista na função home(), em views.py {% endcomment %}
     {% for recipe in recipes %}
