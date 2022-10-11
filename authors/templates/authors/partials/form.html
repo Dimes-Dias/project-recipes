@@ -1,0 +1,43 @@
+<div class="main-content container">
+
+    <form action="{{ form_action }}" method="POST">
+        
+        {% csrf_token %}
+        
+
+        <div class="form-content form-content-grid">
+
+            {% for field in form %}
+            <!-- Para cada campo do formulário, crie um grupo. -->
+            <div class="form-group">
+
+                <!-- Label do campo -->
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                <!-- campo -->
+                {{ field }}
+
+                <!-- Texto explicativo do campo, se houver -->
+                {% if field.help_text %}
+                    <p class="help-text">{{ field.help_text }}</p>
+                {% endif %}
+
+                <!-- Apresenta erros, se existirem -->
+                {{ field.errors }}
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="form-content form-content-grid">
+            <div class="form-group">
+                <button type="submit">Enviar</button>
+            </div>
+        </div>
+            
+    </form>
+
+</div>

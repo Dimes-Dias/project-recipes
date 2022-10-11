@@ -26,17 +26,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@900&display=swap" rel="stylesheet">
 
     <!-- link do arquivo static css -->
+    <!-- <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"> -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
     <!-- título da página -->
     <title>{% block title %}{% endblock title %} Recipes</title>
 
 </head>
+
 <body>
 
     {% include 'partials/header.html' %}
 
+    {% block search %}
     {% include 'partials/search.html' %}
+    {% endblock search %}
 
     <main class="main-content-container">
 
@@ -47,6 +51,10 @@
     </main>
 
     {% include 'partials/footer.html' %}
+
+    <!-- ***************************************************************************** -->
+    <!-- <script src="{% static 'js/bootstrap.min.js' %}"></script> -->
+    <!-- ***************************************************************************** -->
 
 </body>
 

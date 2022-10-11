@@ -39,14 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # para adicionar o django rest framework como app
+    'rest_framework',
     # biblioteca para limpeza automática de arquivos substituídos em uploads
     # basta instalar o pacote com 'pip install django_cleanup'
     # e adicioná-lo aqui
     'django_cleanup',
+    # biblioteca para criação de formulários
+    'crispy_forms',
     # app criado no projeto
     'recipes',
     'authors',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
