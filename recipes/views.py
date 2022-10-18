@@ -1,5 +1,5 @@
 # from http.client import HTTPResponse
-
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q  # para usar OR (ou) no lugar de AND no filter
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render  # , get_list_or_404
