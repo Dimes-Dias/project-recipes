@@ -1,6 +1,11 @@
 <div class="main-content container">
 
-    <form action="{{ form_action }}" method="POST">
+    <!-- 
+        enctype="multipart/form-data" 
+        é obrigatório o uso desse termo, sempre que o form trabalhar
+        com arquivos.
+    -->
+    <form class="main-form" action="{{ form_action }}" method="POST" enctype="multipart/form-data">
         
         {% csrf_token %}
         
@@ -8,26 +13,33 @@
         <div class="form-content form-content-grid">
 
             {% for field in form %}
-            <!-- Para cada campo do formulário, crie um grupo. -->
-            <div class="form-group">
+                <!-- Para cada campo do formulário, crie um grupo. -->
+                <div class="form-group {{ field.field.widget.attrs.class }}">
 
-                <!-- Label do campo -->
-                <label for="{{ field.id_for_label }}">
-                    {{ field.label }}
-                </label>
+                    <!-- Label do campo -->
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
 
-                <!-- campo -->
-                {{ field }}
+                    <!-- campo -->
+                    {{ field }}
 
-                <!-- Texto explicativo do campo, se houver -->
-                {% if field.help_text %}
-                    <p class="help-text">{{ field.help_text }}</p>
+                    <!-- Texto explicativo do campo, se houver -->
+                    {% if field.help_text %}
+                        <p class="help-text">{{ field.help_text }}</p>
+                    {% endif %}
+
+                    <!-- Apresenta erros, se existirem -->
+                    {{ field.errors }}
+
+                </div>
+
+                {% if field.name == 'cover' and field.value.url %}
+                    <div class="span-2">
+                        <img src="{{ field.value.url }}" alt="Capa para {{ recipe.title }}">
+                    </div>
                 {% endif %}
-
-                <!-- Apresenta erros, se existirem -->
-                {{ field.errors }}
-
-            </div>
+                
             {% endfor %}
 
         </div>

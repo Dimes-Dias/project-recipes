@@ -7,24 +7,17 @@
 {% block content %}
 
     <div class="main-content centraliza container">
+
         <h2>Acesso ao sistema</h2>
-        {% if request.user.is_authenticated %}
-            <p>
-                {{ request.user.first_name }}, seja bem vindo ao sistema Recipes.
-            </p>
-            <div>
-                <form action="{% url 'authors:logout' %}" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="username" value="{{ request.user.username }}">
-                    <button class="plaintext-button" type="submit">Clique aqui</button>
-                    para fazer logout.
-                </form> 
-            </div>
-        {% endif %}
+        
+        {% include 'authors/partials/login_message.html' %}
+
     </div>
 
     {% include 'partials/messages.html' %}
     
-    {% include 'authors/partials/form.html' %}
+    {% if not user.is_authenticated %}
+        {% include 'authors/partials/form.html' %}
+    {% endif %}
 
 {% endblock content %}

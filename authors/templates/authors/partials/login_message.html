@@ -1,0 +1,25 @@
+{% if request.user.is_authenticated %}
+    <div class="login-message">
+        <p>
+            {{ user.first_name }}, seja bem vindo ao sistema Recipes.
+        </p>
+        <div>
+            <form action="{% url 'authors:logout' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="username" value="{{ request.user.username }}">
+                <button class="plaintext-button" type="submit">Clique aqui</button>
+                para fazer logout.
+            </form>
+            <div class="form-content-grid">
+                <form class="right" action="{% url 'authors:dashboard' %}" method="POST">
+                    {% csrf_token %}
+                    <button class="plaintext-button" type="submit">Retornar às receitas.</button>
+                </form>
+                <form class="left" action="{% url 'authors:dashboard_recipe_new' %}" method="POST">
+                    {% csrf_token %}
+                    <button class="plaintext-button" type="submit">Criar nova receita.</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endif %}
