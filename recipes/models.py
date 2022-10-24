@@ -1,10 +1,11 @@
 # from email.policy import default
 # from tkinter.tix import Tree
 
-from cProfile import label
+# from cProfile import label
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 
@@ -62,7 +63,11 @@ class Recipe(models.Model):
     # o blank permite que o campo cover fique sem string
     # default coloca string vazia por padrão no campo cover
     cover = models.ImageField(
-        upload_to='recipes/covers/%Y/%m/%d/', blank=True, default='', verbose_name='Imagem')
+        upload_to='recipes/covers/%Y/%m/%d/',
+        blank=True,
+        default='',
+        verbose_name='Imagem'
+    )
     # linka category com a classe Category
     # se a Category for apagada, coloca null em category.
     # nesse caso, category deve permitir valores nulos.
@@ -74,3 +79,8 @@ class Recipe(models.Model):
     # para permitir ver o conteúdo do registro na consulta na admin do django
     def __str__(self):
         return self.title
+
+    # possibilita ver a recipe no site da aplicação,
+    # através de botão "ver no site", na tela de admin do django
+    def get_absolute_url(self):
+        return reverse('recipes:recipe', args=(self.id,))
