@@ -4,16 +4,20 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views import View
 from recipes.models import Recipe
 
 
-@login_required(login_url='authors:login', redirect_field_name='next')
+@method_decorator(
+    login_required(login_url='authors:login', redirect_field_name='next'),
+    name='dispatch'
+)
 class DashboardRecipe(View):
-    def get_recipe(self, id):
+    def get_recipe(self, id=None):
         recipe = None
 
-        if id:
+        if id is not None:
             recipe = Recipe.objects.filter(
                 is_published=False,
                 author=self.request.user,
@@ -25,7 +29,26 @@ class DashboardRecipe(View):
 
         return recipe
 
-    def get(self, request, id):
+    # @method_decorator(
+    #     login_required(login_url='authors:login', redirect_field_name='next')
+    # )
+    def render_recipe(self, form):
+        return render(
+            self.request,
+            'authors/pages/dashboard_recipe.html',
+            context={
+                'form': form,
+            }
+        )
+
+    def get(self, request, id=None):
+        # só para pegar a receita correta
+        recipe = self.get_recipe(id)
+        # repassa os dados da receita instanciada para o form
+        form = AuthorRecipeForm(instance=recipe)
+        return self.render_recipe(form)
+
+    def post(self, request, id=None):
         recipe = self.get_recipe(id)
 
         form = AuthorRecipeForm(
@@ -45,9 +68,19 @@ class DashboardRecipe(View):
 
             messages.success(request, 'Sua receita foi salva com sucesso.')
             return redirect(
-                reverse('authors:dashboard_recipe_edit', args=(id,))
+                reverse('authors:dashboard_recipe_edit', args=(recipe.id,))
             )
 
-        return render(request, 'authors/pages/dashboard_recipe.html', context={
-            'form': form,
-        })
+        return self.render_recipe(form)
+
+
+@method_decorator(
+    login_required(login_url='authors:login', redirect_field_name='next'),
+    name='dispatch'
+)
+class DashboardRecipeDelete(DashboardRecipe):
+    def post(self, *args, **kwargs):
+        recipe = self.get_recipe(self.request.POST.get('id'))
+        recipe.delete()
+        messages.success(self.request, 'Receita excluída com sucesso.')
+        return redirect(reverse('authors:dashboard'))

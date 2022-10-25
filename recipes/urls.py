@@ -9,13 +9,14 @@ from . import views
 app_name = 'recipes'
 
 urlpatterns = [
-    path('', views.home, name="home"),
-    path('recipes/search/', views.search, name="search"),
+    path('', views.RecipeListViewHome.as_view(), name="home"),
+    path('recipes/search/',
+         views.RecipeListViewSearch.as_view(), name="search"),
     # <int:id> é o parâmetro (com o seu tipo int)
     # que será repassado para views.recipe
     # outros tipos: str (qualquer string),
     # slug (alfanumérico com - ou _) e uuid
     path('recipes/category/<int:category_id>/',
-         views.category, name="category"),
+         views.RecipeListViewCategory.as_view(), name="category"),
     path('recipes/<int:id>/', views.recipe, name="recipe"),
 ]
