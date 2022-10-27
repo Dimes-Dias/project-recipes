@@ -1,7 +1,9 @@
 # from http.client import HTTPResponse
 # from django.contrib.auth.decorators import login_required
 from django.db.models import Q  # para usar OR (ou) no lugar de AND no filter
-from django.http import Http404
+from django.forms.models import model_to_dict
+from django.http import Http404, JsonResponse
+# from django.shortcuts import render
 # from django.shortcuts import get_object_or_404, render  # , get_list_or_404
 from django.views.generic import DetailView, ListView
 from utils.pagination import make_pagination
@@ -43,6 +45,18 @@ class RecipeListViewBase(ListView):
 
 class RecipeListViewHome(RecipeListViewBase):
     template_name = 'pages/home.html'
+
+
+class RecipeListViewHomeApi(RecipeListViewBase):
+    template_name = 'pages/home.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        recipes = self.get_context_data()['recipes']
+        recipes_list = recipes.object_list.values()
+        return JsonResponse(
+            list(recipes_list),
+            safe=False,
+        )
 
 
 class RecipeListViewCategory(RecipeListViewBase):
@@ -131,6 +145,34 @@ class RecipeDetail(DetailView):
         })
 
         return ctx
+
+
+class RecipeDetailApi(RecipeDetail):
+    def render_to_response(self, context, **response_kwargs):
+        recipe = self.get_context_data()['recipe']
+        recipe_dict = model_to_dict(recipe)
+
+        # se existir o campo cover, atribui apenas a url
+        if recipe_dict.get('cover'):
+            recipe_dict['cover'] = self.request.build_absolute_uri() + \
+                recipe_dict['cover'].url[1:]
+        else:
+            recipe_dict['cover'] = ''
+
+        # deleta o campo is_published do dicionário recipe_dict
+        # para que o mesmo não seja exibido nos atributos
+        del recipe_dict['is_published']
+        del recipe_dict['preparation_steps_is_html']
+
+        # na falta de um campo, podemos adicioná-lo manualmente
+        # como é o caso de created_at
+        recipe_dict['created_at'] = str(recipe.created_at)
+        recipe_dict['updated_at'] = str(recipe.updated_at)
+
+        return JsonResponse(
+            recipe_dict,
+            safe=False,
+        )
 
 
 '''
