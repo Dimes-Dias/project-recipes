@@ -27,6 +27,15 @@ class RecipeListViewBase(ListView):
         qs = qs.filter(
             is_published=True,
         )
+
+        # para melhorar a performance da busca dos dados na base,
+        # fazendo com que o django faça joins nas selects
+        # onde houver ForenKey (um pra muitos)
+        qs = qs.select_related('author', 'category')
+
+        # se fosse o caso de muitos para muitos, seria a linha abaixo...
+        # qs = qs.prefetch_related()
+
         return qs
 
     def get_context_data(self, *args, **kwargs):

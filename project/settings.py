@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'django_cleanup',
     # biblioteca para criação de formulários
     'crispy_forms',
+    # instalação do debug_toolbar
+    'debug_toolbar',
     # app criado no projeto
     'recipes',
     'authors',
@@ -56,6 +58,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # necessário para usar o debug toolbar
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,7 +73,9 @@ ROOT_URLCONF = 'project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'base_templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -155,3 +161,8 @@ MESSAGE_TAGS = {
     constants.SUCCESS: 'message-success',
     constants.WARNING: 'message-warning',
 }
+
+# para fazer o debug toolbar reconhecer o IP local
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
