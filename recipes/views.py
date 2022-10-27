@@ -2,8 +2,8 @@
 # from django.contrib.auth.decorators import login_required
 from django.db.models import Q  # para usar OR (ou) no lugar de AND no filter
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render  # , get_list_or_404
-from django.views.generic import ListView
+# from django.shortcuts import get_object_or_404, render  # , get_list_or_404
+from django.views.generic import DetailView, ListView
 from utils.pagination import make_pagination
 
 from recipes.models import Recipe
@@ -51,12 +51,24 @@ class RecipeListViewCategory(RecipeListViewBase):
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset(*args, **kwargs)
 
+        if (not qs):
+            raise Http404()
+
         qs = qs.filter(
             category__id=self.kwargs.get('category_id'),
             is_published=True,
         )
 
         return qs
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        ctx.update({
+            'title': f'{ctx.get("recipes")[0].category.name} - Category | '      # noqa: E501
+        })
+
+        return ctx
 
 
 class RecipeListViewSearch(RecipeListViewBase):
@@ -67,8 +79,8 @@ class RecipeListViewSearch(RecipeListViewBase):
 
         search_term = self.request.GET.get('q', '').strip()
 
-        if not search_term:
-            raise Http404('Página não encontrada. 🤪')
+        if (not search_term) or (not qs):
+            raise Http404()
 
         qs = qs.filter(
             Q(
@@ -94,6 +106,34 @@ class RecipeListViewSearch(RecipeListViewBase):
         return ctx
 
 
+class RecipeDetail(DetailView):
+    model = Recipe
+    context_object_name = 'recipe'
+    template_name = 'pages/recipe-view.html'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+
+        if (not qs):
+            raise Http404()
+
+        qs = qs.filter(
+            is_published=True,
+        )
+
+        return qs
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        ctx.update({
+            'is_detail_page': True,
+        })
+
+        return ctx
+
+
+'''
 def home(request):
     # recipes = Recipe.objects.all().order_by('-id')
     recipes = Recipe.objects.filter(is_published=True).order_by('-id')
@@ -181,3 +221,4 @@ def recipe(request, id):
         'recipe': recipe,
         'is_detail_page': True,
     })
+'''
